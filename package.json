@@ -1,0 +1,15 @@
+{
+  "name": "monstera",
+  "version": "1.0.0",
+  "description": "This project explores Shopify Theme Development, inheriting from the [Elizabeth master theme](https://github.com/polidario/Elizabeth_Clean).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tailwindcss": "^3.3.3"
+  }
+}

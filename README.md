@@ -4,7 +4,7 @@ This project explores Shopify Theme Development, inheriting from the [Elizabeth 
 
 ## Theme development sections covered
 
-Status | Lectures
+Status | Sections
 ------------ | -------------
 :heavy_check_mark: | Installing Development Tools
 :heavy_check_mark: | Navigational Bar
@@ -19,6 +19,12 @@ Status | Lectures
 :heavy_check_mark: | Advanced Product Page
 :heavy_check_mark: | Search Page
 :hourglass: | More lessons coming
+
+## Technologies used
+* Shopify - Ecommerce CMS used for this project
+* Liquid - used for templating
+* NPM - used to manage Javacript packages
+* TailwindCSS - utility-first CSS framework, used for building the custom user interface
 
 ## How to use
 
