@@ -26,6 +26,11 @@ Status | Sections
 * NPM - used to manage Javacript packages
 * TailwindCSS - utility-first CSS framework, used for building the custom user interface
 
+## Websites used
+* [Shopify Dev](https://shopify.dev/docs) - Documentation used as a guide throughout theme development
+* [Heroicons](https://heroicons.com/) - used to source SVG snippets
+* [Alpine.js](https://alpinejs.dev/) JavaScript framework used to add JS behavior to HTML markup
+
 ## How to use
 
 To use this repository for making Shopify themes, use the following command of Shopify CLI.
