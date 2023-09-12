@@ -62,12 +62,14 @@
         <a href="{{ routes.cart_add_url }}" class="whitespace-nowrap text-base text-gray-500 hover:text-gray-900">
           {% render 'icon-cart' %}
         </a>
-        <a href="{{ routes.account_login_url }}" class="text-base text-gray-500 hover:text-gray-900">
-          Login
-        </a>
-        <a href="{{ routes.account_register_url }}" class="text-base text-gray-500 hover:text-gray-900">
-          Register
-        </a>
+        {% if shop.customer_accounts_enabled == true %}
+          <a href="{{ routes.account_login_url }}" class="text-base text-gray-500 hover:text-gray-900">
+            Login
+          </a>
+          <a href="{{ routes.account_register_url }}" class="text-base text-gray-500 hover:text-gray-900">
+            Register
+          </a>
+        {% endif %}
       </div>
     </div>
   </div>
