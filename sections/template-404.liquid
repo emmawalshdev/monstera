@@ -1,7 +1,55 @@
-<!--locales values-->
-<h1>
-  {{ 'general.404.title' | t }}
-</h1>
-<p>
-  {{ 'general.404.subtext_html' | t }}
-</p>
+<div class="my-5">
+  <h1>
+    {{ section.settings.tite }}
+  </h1>
+  <p>
+    {{ section.settings.text }}
+  </p>
+  {% assign shopUrl = shop.secure_url %}
+
+  {% if section.settings.button_url != blank %}
+    {% assign shopUrl = section.settings.button %}
+    <div class="button__wrapper">
+      <a href="{{ shopUrl }}">
+        {{ section.settings.button }}
+      </a>
+    </div>
+  {% else %}
+    <div class="button__wrapper">
+      <a href="{{ shopUrl }}">
+        {{ section.settings.button }}
+      </a>
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+  {
+    "name": "404-template",
+    "tag": "section",
+    "class": "flex items-center justify-center text-center py-7 h-screen",
+    "settings": [
+      {
+        "type": "text",
+        "id": "tite",
+        "label": "Title",
+        "default": "404 not Found"
+      }, {
+        "type": "text",
+        "id": "text",
+        "label": "Text",
+        "default": "Sorry, we couldn't find what you were looking for."
+      }, {
+        "type": "text",
+        "id": "button",
+        "label": "Button",
+        "default": "Contact us"
+      }, {
+        "type": "url",
+        "id": "button_url",
+        "label": "URL"
+      }
+    ]
+
+  }
+{% endschema %}
