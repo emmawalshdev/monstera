@@ -1,11 +1,14 @@
-<article class="py-5">
+<article
+  class="py-5"
+  itemscope
+  itemtype="http://schema.org/BlogPosting">
   {% for block in section.blocks %}
     {% case block.type %}
       {% when 'article_title' %}
       <div class="flex items-center justify-center">
         <div class="max-w-7xl text-center">
           <a href="{{ blog.url }}" class="text-base uppercase text-gray-500 hover:text-gray-900 font-bold">
-            {{ blog.title }}
+            <h2 class="font-medium" itemprop="headline">{{ blog.title }}</h1>
           </a>
           <div class="text-4xl md:text-6xl font-medium">
             <h1>
@@ -19,11 +22,16 @@
       <div class="flex items-center justify-center">
         <div class="max-w-7xl text-center">
           {% if section.settings.enable_author %}
-            <p class="content__author">
-              <span>
-                By
-              </span>
-              {{ article.author }}
+            <p
+              class="content__author"
+              itemscope
+              itemtype="http://schema.org/Person">
+              <small itemtype="author">
+                <span>
+                  By
+                </span>
+                {{ article.author }}
+              </small>
             </p>
           {% endif %}
         </div>
@@ -33,7 +41,7 @@
       {% if section.settings.enable_published_date %}
         <div class="flex items-center justify-center">
           <div class="max-w-7xl text-center">
-            <time datetime="{{ article.published_at | date: "%a, %b %d, %y" }}">
+            <time itemprop="datePublished dateCreated" datetime="{{ article.published_at | date: "%a, %b %d, %y" }}">
               <span>
                 On
               </span>
@@ -43,7 +51,7 @@
         </div>
       {% endif %}
       {% when 'article_thumbnail_image' %}
-      <div class="max-w-7xl bg-blue-100 rounded-lg mx-2 md-2 md:mx-auto overflow-hidden my-4">
+      <div itemprop="image" class="max-w-7xl bg-blue-100 rounded-lg mx-2 md-2 md:mx-auto overflow-hidden my-4">
         {% if article.image %}
           <img src="{{ article.image | img_url: '1600x1050' }}" alt="{{ article.image.alt }}" />
         {% else %}
@@ -54,9 +62,8 @@
 
       {% when 'article_content' %}
       <div class="flex items-center justify-center my-4">
-        <div class="max-w-7xl">
+        <div itemprop="articleBody" class="max-w-7xl">
           {{ article.content }}
-
         </div>
       </div>
     {% endcase %}
@@ -75,7 +82,7 @@
             <span class="comment-author">
               {{ eachComment.author }}
             </span>
-            <span class="text-small">
+            <span class="text-sm text-gray-700">
               {{ eachComment.created_at | date: "%a, %b %d, %y" }}
             </span>
             <p>
