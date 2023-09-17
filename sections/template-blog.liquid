@@ -1,20 +1,45 @@
-{% paginate blog.articles by section.settings.number_of_blog_posts %}
-  {% for article in blog.articles %}
-    <div>
-      {% if article.image %}
-        <img src="{{ article.image | img_url: 'medium' }}" alt="{{ article.image.alt }}">
-      {% else %}
-        {% assign placeholder_image = 'lifestyle-2' %}
-        {{ placeholder_image | placeholder_svg_tag: 'w-full ' }}
-      {% endif %}
-      <h1>{{ article.title }}</h1>
-      {% if article.exerpt.size > 0 %}
-        {% else %}
-          <p>{{ article.content | strip_html | truncatewords: 15 }}</p>
-      {% endif %}
+<div class="py-8">
+
+  {% paginate blog.articles by section.settings.number_of_blog_posts %}
+    <h1 class="text-center text-3xl">
+      {{ blog.title }}
+    </h1>
+
+    <div class="max-w-6xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {% for article in blog.articles %}
+          <div class="w-full">
+            <div class="bg-whiteshadow-xl rounder-lg overflow-hidden">
+              {% if article.image %}
+                <img
+                  src="{{ article.image | img_url: 'medium' }}"
+                  alt="{{ article.image.alt }}"
+                  class="w-full object-cover h-80">
+              {% else %}
+                {% assign placeholder_image = 'lifestyle-2' %}
+                {{ placeholder_image | placeholder_svg_tag: "w-full object-cover h-80" }}
+              {% endif %}
+              <div class="py-4">
+                <h2 class="text-xl font-medium my-4">{{ article.title }}</h2>
+                {% if article.exerpt.size > 0 %}
+                  {{ article.excerpt | strip_html | truncatewords: 15 }}
+                {% else %}
+                  <p class="mb-2">{{ article.content | strip_html | truncatewords: 15 }}</p>
+                {% endif %}
+                <a href="{{ article.url }}" class="font-medium text-blue-600 hover:text-blue-800">{{ section.settings.blog_read_more }}</a>
+              </div>
+
+            </div>
+
+          </div>
+        {% endfor %}
+      </div>
     </div>
-  {% endfor %}
-{% endpaginate %}
+
+  {% endpaginate %}
+</div>
+
+
 
 {% schema %}
   {
@@ -28,6 +53,11 @@
         "max": 6,
         "label": "number of blogs shows",
         "default": 5
+      }, {
+        "type": "text",
+        "id": "blog_read_more",
+        "label": "Read more label",
+        "default": "Read more"
       }
     ]
   }
