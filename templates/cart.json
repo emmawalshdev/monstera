@@ -1,0 +1,9 @@
+{
+    "name": "Template cart",
+    "sections": {
+        "template": {
+            "type": "template-cart"
+        }
+    },
+    "order": ["template"]
+}
