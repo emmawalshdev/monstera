@@ -194,8 +194,8 @@
 <script type="application/ld+json">
   {
   "@context": "http://schema.org",
-          "@type": "BlogPosting",
-          "headline": {{ article.title | json }},
+            "@type": "BlogPosting",
+            "headline": {{ article.title | json }},
   "articleBody": {{ article.content | strip_html | json }},
   {% if article.excerpt != blank %}
     "description": {{ article.excerpt | strip_html | json }},
@@ -205,17 +205,17 @@
     {{ article.image | img_url: "medium" | prepend: 'https:' | json }}
     ]
   {% endif %}
-  "datePublished": {{ article.published_at | date: format "default" | json }},
-  "dateCreated": {{ article.created_at | date: format "default" | json }},
+  "datePublished": {{ article.published_at | date: format: "default" | json }},
+  "dateCreated": {{ article.created_at | date: format: "default" | json }},
   "author": {
-              "@type": "Person",
-              "name": {{ article.author | json }},
+                "@type": "Person",
+                "name": {{ article.author | json }},
   },
-          "publisher": {
-            "@type": "Orginization",
-            "name": {{ shop.name | json }},
+            "publisher": {
+              "@type": "Orginization",
+              "name": {{ shop.name | json }},
   }
-              }</script>
+                }</script>
 
 {% schema %}
   {
