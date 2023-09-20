@@ -1,0 +1,21 @@
+{% paginate collection.products by 5 %}
+  {% for product in collection.products %}
+    <a href="{{ product.url }}">
+      {{ product.image }}
+      {% if product.featured_image %}
+        <img src="{{ product.featured_image | img_url: 'medium'}}" alt="{{ product.title }}">
+      {% else %}
+        {{ 'product-1' | placeholder_svg_tag }}
+      {% endif %}
+    </a>
+    <h3>
+      {{ product.title }}
+    </h3>
+    <h4>{{ product.vendor }}</h4>
+    <p>{{ product.price | money }}</p>
+  {% else %}
+    <p>There are currently no products in this collection</p>
+  {% endfor %}
+
+  {% render 'pagination', pagination: paginate %}
+{% endpaginate %}
