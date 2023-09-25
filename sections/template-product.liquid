@@ -55,7 +55,7 @@
       </div>
     </div>
     <div class="product--info sticky top-5 p-2">
-      {% form 'product', product %}
+      {% form 'product', product, id: 'product-form', novalidate: 'novalidate' %}
         <input
           type="hidden"
           name="id"
@@ -76,7 +76,7 @@
               </h2>
             </div>
             {% when 'price' %}
-            <div class="my-3">
+            <div class="my-3" id="price-{{ section.id }}">
               <span class="text-base text-base text-gray-500 line-through">
                 {{ selected_variant.compare_at_price | money }}
               </span>
@@ -93,7 +93,7 @@
             <!--only show variant if present-->
             <div class="my-3">
               {% unless product.has_only_default_variant %}
-                <div data-url="{{ product.url }}" data-section="{{ section.id }}">
+                <variant-selector data-url="{{ product.url }}" data-section="{{ section.id }}">
                   {% for option in product.options_with_values %}
                     <label for="Option-{{ section.id }}-{{ forloop.index0 }}">{{ option.name }}</label>
 
@@ -113,8 +113,12 @@
                         {% endfor %}
                       </select>
                     </div>
+                    <!--product variant details -->
+                    <script type="application/json">
+                      {{ product.variants | json }}
+                    </script>
                   {% endfor %}
-                </div>
+                </variant-selector>
               {% endunless %}
             </div>
             {% when 'quantity' %}
@@ -162,6 +166,117 @@
     </div>
   </div>
 </div>
+
+<script>
+
+  class VarientSelector extends HTMLElement {
+    constructor() {
+
+// super to use props + methods of htmlelement
+      super();
+      this.addEventListener("change", this.onVariantChange)
+    }
+
+    onVariantChange() {
+
+// this being the varientselector html element
+      this.getSelectedOptions();
+      this.getSelectedVariant();
+
+// if currentVariant then update URL
+      if (this.currentVariant) {
+        this.updateURL();
+        this.updateFormId();
+        this.updatePrice();
+      }
+    }
+
+    getSelectedOptions() {
+
+// iterate through select tags + return each value
+      this.options = Array.from(this.querySelectorAll('select'), (select) => select.value);
+      console.log(this.options);
+    }
+
+    getVariantJSON() {
+
+// pass variant data from this
+      this.variantData = this.variantData || JSON.parse(this.querySelector('[type="application/json"]').textContent);
+      return this.variantData;
+    }
+
+    getSelectedVariant() {
+
+// get array + loop through each variant
+      this.currentVariant = this.getVariantJSON().find((variant) => {
+
+// assign 'options' to findings
+        const findings = !variant.options.map((option, index) => {
+
+// compare selected options to current options of getVariantJSON
+          return this.options[index] === option;
+
+// check if array if false is present - look for another option
+        }).includes(false);
+
+        if (findings) 
+          return variant;
+        
+
+
+
+      });
+      console.log(this.currentVariant);
+    }
+
+    updateURL() {
+
+// check if currentVariant/empty is false
+      if (!this.currentVariant) 
+        return;
+      
+
+
+
+// if currentVaraint update URL
+      window.history.replaceState({}, '', `${
+        this.dataset.url
+      }?variant=${
+        this.currentVariant.id
+      }`);
+    }
+
+    updateFormId() {
+      const form_input = document.querySelector('#product-form').querySelector('input[name="id"]');
+      form_input.value = this.currentVariant.id;
+    }
+
+    updatePrice() {
+      fetch(`${
+        this.dataset.url
+      }?variant=${
+        this.currentVariant.id
+      }&section_id=${
+        this.dataset.section
+      }`).then((response) => response.text()).then((responseText) => {
+        const id = `price-${
+          this.dataset.section
+        }`;
+        const html = new DOMParser().parseFromString(responseText, 'text/html');
+
+        const oldPrice = document.getElementById(id);
+        const newPrice = html.getElementById(id);
+
+        if (oldPrice && newPrice) 
+          oldPrice.innerHTML = newPrice.innerHTML;
+        
+      })
+    }
+  }
+
+// define a new custom element - use instead of div
+  customElements.define("variant-selector", VarientSelector);
+</script>
 
 <script>
   const swiper = new Swiper('.swiper', {
