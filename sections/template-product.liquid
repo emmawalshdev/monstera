@@ -55,6 +55,7 @@
       </div>
     </div>
     <div class="product--info sticky top-5 p-2">
+      <!--form object will add hidden fields directly underneath-->
       {% form 'product', product, id: 'product-form', novalidate: 'novalidate' %}
         <input
           type="hidden"
@@ -169,19 +170,27 @@
 
 <script>
 
+  // constructer - called when object is created, before any methods are called
+// extend HTML element to benefit from HTML element functionality (event listeners)
   class VarientSelector extends HTMLElement {
     constructor() {
 
 // super to use props + methods of htmlelement
       super();
+
+// called to access parents class
+
+// create change event listener
       this.addEventListener("change", this.onVariantChange)
     }
 
+// get the following on change of variant
     onVariantChange() {
 
-// this being the varientselector html element
       this.getSelectedOptions();
       this.getSelectedVariant();
+
+      console.log(this.currentVariant);
 
 // if currentVariant then update URL
       if (this.currentVariant) {
@@ -193,9 +202,8 @@
 
     getSelectedOptions() {
 
-// iterate through select tags + return each value
+// iterate through select tags + return each value - from(arrayLike, mapFn)
       this.options = Array.from(this.querySelectorAll('select'), (select) => select.value);
-      console.log(this.options);
     }
 
     getVariantJSON() {
@@ -207,7 +215,7 @@
 
     getSelectedVariant() {
 
-// get array + loop through each variant
+// get array of variantData + loop through each variant
       this.currentVariant = this.getVariantJSON().find((variant) => {
 
 // assign 'options' to findings
@@ -226,7 +234,6 @@
 
 
       });
-      console.log(this.currentVariant);
     }
 
     updateURL() {
@@ -238,7 +245,7 @@
 
 
 
-// if currentVaraint update URL
+// if currentVaraint update URL, change url - replaceState(state, unused, url)
       window.history.replaceState({}, '', `${
         this.dataset.url
       }?variant=${
@@ -251,6 +258,7 @@
       form_input.value = this.currentVariant.id;
     }
 
+// use AJAX request to update page content without reloading the page
     updatePrice() {
       fetch(`${
         this.dataset.url
@@ -259,22 +267,23 @@
       }&section_id=${
         this.dataset.section
       }`).then((response) => response.text()).then((responseText) => {
+
+// responseText = get html from that url
         const id = `price-${
           this.dataset.section
         }`;
         const html = new DOMParser().parseFromString(responseText, 'text/html');
-
         const oldPrice = document.getElementById(id);
         const newPrice = html.getElementById(id);
 
         if (oldPrice && newPrice) 
           oldPrice.innerHTML = newPrice.innerHTML;
         
-      })
+      });
     }
   }
 
-// define a new custom element - use instead of div
+// define a new custom element - (name, constructor)
   customElements.define("variant-selector", VarientSelector);
 </script>
 
