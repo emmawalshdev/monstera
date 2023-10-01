@@ -617,6 +617,10 @@ video {
   margin: -0.75rem;
 }
 
+.m-6 {
+  margin: 1.5rem;
+}
+
 .-my-2 {
   margin-top: -0.5rem;
   margin-bottom: -0.5rem;
