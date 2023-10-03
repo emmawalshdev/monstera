@@ -1,0 +1,341 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+{% assign selected_variant = product.selected_or_first_available_variant %}
+
+<style>
+  .swiper-button-prev,
+  .swiper-button-next {
+    color: black !important;
+    top: auto !important;
+    height: 20px;
+  }
+
+  .swiper-button-prev::after,
+  .swiper-button-next::after {
+    font-size: 20px;
+  }
+
+  .swiper-pagination {
+    color: black;
+    bottom: 0 !important;
+  }
+  .swiper-pagination-bullet-active {
+    background: black !important;
+  }
+  .product--info {
+    height: fit-content;
+  }
+</style>
+<div class="w-6xl mx-auto my-8">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+    <div class="product--media">
+      <div class="hidden md:block">
+        {% for media in product.media %}
+          <div class="h-100 overflow-hidden p-2">
+            {% render 'product-media', media: media %}
+          </div>
+        {% endfor %}
+      </div>
+      <div class="md:hidden">
+        <div class="swiper h-94">
+          <div class="swiper-wrapper">
+            {% for media in product.media %}
+              <div class="swiper-slide">
+                <div class="h-80 overflow-hidden p-2">
+                  {% render 'product-media', media: media %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          <div class="swiper-pagination"></div>
+          <div class="swiper-button-prev"></div>
+          <div class="swiper-button-next"></div>
+        </div>
+      </div>
+    </div>
+    <div class="product--info sticky top-5 p-2">
+      <!--form object will add hidden fields directly underneath-->
+      {% form 'product', product, id: 'product-form', novalidate: 'novalidate' %}
+        <input
+          type="hidden"
+          name="id"
+          value="{{ selected_variant.id }}">
+
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'vendor' %}
+            <div class="my-3">
+              <span class="text-xs text-gray-500">
+                {{ product.vendor }}
+              </span>
+            </div>
+            {% when 'title' %}
+            <div class="my-3">
+              <h2 class="text-3xl text-gray-900">
+                {{ product.title }}
+              </h2>
+            </div>
+            {% when 'price' %}
+            <div class="my-3" id="price-{{ section.id }}">
+              <span class="text-base text-base text-gray-500 line-through">
+                {{ selected_variant.compare_at_price | money }}
+              </span>
+              <span class="text-lg text-gray-900">
+                {{ selected_variant.price | money }}
+              </span>
+              {% if selected_variant.price < selected_variant.compare_at_price %}
+                <span class="bg-red-100 px-5 py-1 text-sm font-bold bg-red-500 rounded-full text-white mx-4">
+                  Sale
+                </span>
+              {% endif %}
+            </div>
+            {% when 'variant_selector' %}
+            <!--only show variant if present-->
+            <div class="my-3">
+              {% unless product.has_only_default_variant %}
+                <variant-selector data-url="{{ product.url }}" data-section="{{ section.id }}">
+                  {% for option in product.options_with_values %}
+                    <label for="Option-{{ section.id }}-{{ forloop.index0 }}">{{ option.name }}</label>
+
+                    <div class="my-2">
+                      <select
+                        name="options[{{ option.name | escape }}]"
+                        id="Option-{{ section.id }}-{{ forloop.index0 }}"
+                        class="w-full border py-3 px-3">
+
+                        {% for value in option.values %}
+                          <option
+                            value="{{ value | escape }}"
+                            {% if option.selected_value == value %}
+                            selected
+                            {% endif %}>
+                            {{ value }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <!--product variant details -->
+                    <script type="application/json">
+                      {{ product.variants | json }}
+                    </script>
+                  {% endfor %}
+                </variant-selector>
+              {% endunless %}
+            </div>
+            {% when 'quantity' %}
+            <div class="my-3">
+              <label for="Quantity-{{ section.id }}">Quantity</label>
+
+              <div class="my-2">
+                <input
+                  type="number"
+                  name="quantity"
+                  id="Quantity-{{ section.id }}"
+                  min="1"
+                  value="1"
+                  class="w-full border py-3 px-3">
+              </div>
+
+            </div>
+            {% when 'description' %}
+            <div class="my-3">
+              <p class="text-gray-700">
+                {{ product.description }}
+              </p>
+            </div>
+            {% when 'checkout_buttons' %}
+              <div class="my-3">
+              <!--check if product is available-->
+              <button
+                type="submit"
+                name="add"
+                class="w-full py-6 px-4 bg-gray-900 text-white hover:bg-gray-700 rounded-sm my-2"
+                {% if selected_variant.available == false %}
+                disabled
+                {% endif %}>
+                {% if selected_variant.available == false %}
+                  Sold out
+                {% else %}
+                  Add to cart
+                {% endif %}
+              </button>
+            </div>
+        {% else %}
+          {% endcase %}
+        {% endfor %}
+      {% endform %}
+    </div>
+  </div>
+</div>
+
+<script>
+
+  // constructer - called when object is created, before any methods are called
+// extend HTML element to benefit from HTML element functionality (event listeners)
+  class VarientSelector extends HTMLElement {
+    constructor() {
+
+// super to use props + methods of htmlelement
+      super();
+
+// called to access parents class
+
+// create change event listener
+      this.addEventListener("change", this.onVariantChange)
+    }
+
+// get the following on change of variant
+    onVariantChange() {
+
+      this.getSelectedOptions();
+      this.getSelectedVariant();
+
+      console.log(this.currentVariant);
+
+// if currentVariant then update URL
+      if (this.currentVariant) {
+        this.updateURL();
+        this.updateFormId();
+        this.updatePrice();
+      }
+    }
+
+    getSelectedOptions() {
+
+// iterate through select tags + return each value - from(arrayLike, mapFn)
+      this.options = Array.from(this.querySelectorAll('select'), (select) => select.value);
+    }
+
+    getVariantJSON() {
+
+// pass variant data from this
+      this.variantData = this.variantData || JSON.parse(this.querySelector('[type="application/json"]').textContent);
+      return this.variantData;
+    }
+
+    getSelectedVariant() {
+
+// get array of variantData + loop through each variant
+      this.currentVariant = this.getVariantJSON().find((variant) => {
+
+// assign 'options' to findings
+        const findings = !variant.options.map((option, index) => {
+
+// compare selected options to current options of getVariantJSON
+          return this.options[index] === option;
+
+// check if array if false is present - look for another option
+        }).includes(false);
+
+        if (findings) 
+          return variant;
+        
+
+
+
+      });
+    }
+
+    updateURL() {
+
+// check if currentVariant/empty is false
+      if (!this.currentVariant) 
+        return;
+      
+
+
+
+// if currentVaraint update URL, change url - replaceState(state, unused, url)
+      window.history.replaceState({}, '', `${
+        this.dataset.url
+      }?variant=${
+        this.currentVariant.id
+      }`);
+    }
+
+    updateFormId() {
+      const form_input = document.querySelector('#product-form').querySelector('input[name="id"]');
+      form_input.value = this.currentVariant.id;
+    }
+
+// use AJAX request to update page content without reloading the page
+    updatePrice() {
+      fetch(`${
+        this.dataset.url
+      }?variant=${
+        this.currentVariant.id
+      }&section_id=${
+        this.dataset.section
+      }`).then((response) => response.text()).then((responseText) => {
+
+// responseText = get html from that url
+        const id = `price-${
+          this.dataset.section
+        }`;
+        const html = new DOMParser().parseFromString(responseText, 'text/html');
+        const oldPrice = document.getElementById(id);
+        const newPrice = html.getElementById(id);
+
+        if (oldPrice && newPrice) 
+          oldPrice.innerHTML = newPrice.innerHTML;
+        
+      });
+    }
+  }
+
+// define a new custom element - (name, constructor)
+  customElements.define("variant-selector", VarientSelector);
+</script>
+
+<script>
+  const swiper = new Swiper('.swiper', {
+    direction: 'horizontal',
+    pagination: {
+      el: '.swiper-pagination'
+    },
+    navigation: {
+      prevEl: '.swiper-button-prev',
+      nextEl: '.swiper-button-next'
+    }
+  });
+</script>
+
+{% schema %}
+  {
+    "name": "Product",
+    "blocks": [
+      {
+        "type": "vendor",
+        "name": "Vendor",
+        "limit": 1
+      },
+      {
+        "type": "title",
+        "name": "Title",
+        "limit": 1
+      },
+      {
+        "type": "price",
+        "name": "Price",
+        "limit": 1
+      },
+      {
+        "type": "variant_selector",
+        "name": "Variant Selector",
+        "limit": 1
+      }, {
+        "type": "quantity",
+        "name": "Quantity",
+        "limit": 1
+      }, {
+        "type": "description",
+        "name": "Description",
+        "limit": 1
+      }, {
+        "type": "checkout_buttons",
+        "name": "Checkout buttons",
+        "limit": 1
+      }
+    ]
+  }
+{% endschema %}
