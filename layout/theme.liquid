@@ -11,6 +11,11 @@
     <!-- Header hook for plugins -->
     {{ 'application.css' | asset_url | stylesheet_tag }}
     {{ 'application.js' | asset_url | script_tag }}
+    <style>
+      [x-cloak] {
+        display: none;
+      }
+    </style>
   </head>
   <body>
     {% section 'header' %}
