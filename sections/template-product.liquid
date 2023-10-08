@@ -1,5 +1,5 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
-<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js" defer></script>
 
 {% assign selected_variant = product.selected_or_first_available_variant %}
 
@@ -38,11 +38,11 @@
         {% endfor %}
       </div>
       <div class="md:hidden">
-        <div class="swiper h-94">
+        <div class="swiper">
           <div class="swiper-wrapper">
             {% for media in product.media %}
               <div class="swiper-slide">
-                <div class="h-80 overflow-hidden p-2">
+                <div class=" h-[100vw] overflow-hidden py-9">
                   {% render 'product-media', media: media %}
                 </div>
               </div>
@@ -279,6 +279,9 @@
         if (oldPrice && newPrice) 
           oldPrice.innerHTML = newPrice.innerHTML;
         
+
+
+
       });
     }
   }
@@ -288,16 +291,23 @@
 </script>
 
 <script>
-  const swiper = new Swiper('.swiper', {
-    direction: 'horizontal',
-    pagination: {
-      el: '.swiper-pagination'
-    },
-    navigation: {
-      prevEl: '.swiper-button-prev',
-      nextEl: '.swiper-button-next'
+
+  document.addEventListener('DOMContentLoaded', function() {
+    try {
+      const swiper = new Swiper('.swiper', {
+        direction: 'horizontal',
+        pagination: {
+          el: '.swiper-pagination'
+        },
+        navigation: {
+          prevEl: '.swiper-button-prev',
+          nextEl: '.swiper-button-next'
+        }
+      });
+    } catch (e) {
+      console.log('SwiperJS not defined');
     }
-  });
+  })
 </script>
 
 {% schema %}
