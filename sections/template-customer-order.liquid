@@ -20,7 +20,7 @@
             {% if line_item.image %}
               <img
                 class="w-full h-full object-center object-cover"
-                src="{{ line_item.image | img_url: 'medium' }}"
+                src="{{ line_item.image | image_url: width: '800' }}"
                 alt="{{ line_item.image.alt }}">
             {% else %}
               {{ 'product-1' | placeholder_svg_tag: 'w-full h-full object-center object-cover' }}

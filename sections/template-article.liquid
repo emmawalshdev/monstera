@@ -53,7 +53,7 @@
       {% when 'article_thumbnail_image' %}
       <div itemprop="image" class="max-w-7xl bg-blue-100 rounded-lg mx-2 md-2 md:mx-auto overflow-hidden my-4">
         {% if article.image %}
-          <img src="{{ article.image | img_url: '1600x1050' }}" alt="{{ article.image.alt }}" />
+          <img src="{{ article.image | image_url: width: '1600x1050' }}" alt="{{ article.image.alt }}" />
         {% else %}
           {% assign placeholder_image = 'lifestyle-2' %}
           {{ placeholder_image | placeholder_svg_tag: 'w-full h-80 md:h-96 object-cover object-center p5' }}
@@ -194,28 +194,28 @@
 <script type="application/ld+json">
   {
   "@context": "http://schema.org",
-            "@type": "BlogPosting",
-            "headline": {{ article.title | json }},
+                "@type": "BlogPosting",
+                "headline": {{ article.title | json }},
   "articleBody": {{ article.content | strip_html | json }},
   {% if article.excerpt != blank %}
     "description": {{ article.excerpt | strip_html | json }},
   {% endif %}
   {% if article.image %}
     "image": [
-    {{ article.image | img_url: "medium" | prepend: 'https:' | json }}
+    {{ article.image | image_url: width: '800' | prepend: 'https:' | json }}
     ]
   {% endif %}
   "datePublished": {{ article.published_at | date: format: "default" | json }},
   "dateCreated": {{ article.created_at | date: format: "default" | json }},
   "author": {
-                "@type": "Person",
-                "name": {{ article.author | json }},
+                    "@type": "Person",
+                    "name": {{ article.author | json }},
   },
-            "publisher": {
-              "@type": "Orginization",
-              "name": {{ shop.name | json }},
+                "publisher": {
+                  "@type": "Orginization",
+                  "name": {{ shop.name | json }},
   }
-                }</script>
+                    }</script>
 
 {% schema %}
   {
