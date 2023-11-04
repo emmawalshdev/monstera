@@ -1,0 +1,53 @@
+
+<div class="flex flex-col items-center">
+    <div class="max-w-6xl max-auto">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <div>
+                {% if section.settings.image %}
+                    <img src="{{ section.settings.image | image_url: width: '800' }}" alt="{{ section.settings.image.alt }}"
+                    class="w-full h-full object-cover transition duration-1000 ease-in-out">
+                {% else %}
+                 {{ 'product-6' | placeholder_svg_tag: 'w-full h-full' }}
+                {% endif %}
+            </div>
+            <div>
+                <h2>
+                    {{ section.settings.title }}
+                </h2>
+                <p>
+                    {{ section.settings.text }}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% schema %}
+{
+    "name": "Image with Text",
+    "settings": [
+        {
+            "type": "text",
+            "id": "title",
+            "default": "Title",
+            "label": "Title"
+        },
+        {
+            "type":"richtext",
+            "id": "text",
+            "default": "<p>Text here Text here Text here Text here</p>",
+            "label": "Text"
+        },
+        {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image"
+        }
+    ],
+    "presets": [
+        {
+            "name": "Image with Text"
+        }
+    ]
+}
+{% endschema %}
