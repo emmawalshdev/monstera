@@ -1,0 +1,19 @@
+# Ignore assets - generated or 3rd party code
+assets/
+_src/assets
+
+# Ignore config files
+_src/config/
+config/
+*.json
+
+# Ignore images
+_src/icons/
+*.svg
+
+# Ignore non-project folders
+_backup/
+docs/
+node_modules/
+
+rollup.config.js
