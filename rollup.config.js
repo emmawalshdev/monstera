@@ -28,7 +28,6 @@ export default [
         output: {
             format: 'esm',
             dir: 'assets',
-            souremap: true,
         },
         watch: {
 			clearScreen: false,
