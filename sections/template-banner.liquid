@@ -1,0 +1,152 @@
+{{ 'banner.css' |  asset_url |  stylesheet_tag }}
+
+<div class="image-banner" {% if section.settings.hide_section %} hidden {% endif %}
+    {{ section.settings.desktop_text_box_position }}>
+    <div class="image-banner__image">
+        {%- if section.settings.image != blank -%}
+            {%- assign css_class = 'w-full h-80 object-center object-cover' -%}
+            {% render 'image', image: section.settings.image, css_class: css_class %}
+        {%- else -%}
+            {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg' }}
+        {%- endif -%}
+    </div>
+    {% if section.settings.show_overlay == true %}
+        <div class="image-banner__overlay absolute top-0 w-full h-80 bg-black opacity-50"></div>
+    {% endif %}
+    <div class="image-banner__text absolute top-0 w-full h-full flex justify-center items-center">
+        <div class="flex flex-col items-center">
+            {%- for block in section.blocks -%}
+                {%- case block.type -%}
+                  {%- when 'heading' -%}
+                    <h2 class="image-banner__heading text-xl lg:text-3xl text-white">
+                        {{ block.settings.heading }}
+                    </h2>
+                  {%- when 'text' -%}
+                    <p class="text-white">
+                        {{ block.settings.text }}
+                    </p>
+                {% comment %} {%- when 'buttons' -%}
+                    <div class="image-banner__buttons">
+                        {%- if block.settings.button_link != blank -%}
+                            yes
+                            <a href="{{ block.settings.button_link }}" class="text-white button {{ block.settings.button_style }}">
+                                {{ block.settings.button_label | escape }}
+                            </a>
+                        {%- endif -%}
+                    </div> {% endcomment %}
+                  {%- endcase -%}
+            {%- endfor -%}
+        </div>
+
+    </div>
+</div>
+
+{%  schema  %}  
+{
+    "name": "Banner",
+    "tag": "section",
+    "class": "section",
+    "settings": [
+        {
+            "type": "checkbox",
+            "id": "hide_section",
+            "label": "Hide Section",
+            "default": false,
+            "info": "Tick this box to hide element"
+        },
+        {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image banner"
+        },
+        {
+            "type": "checkbox",
+            "id": "show_overlay",
+            "label": "Show overlay",
+            "default": true
+        }
+    ],
+    "blocks": [
+        {
+           "type": "heading",
+           "name": "heading",
+           "limit": 1,
+           "settings": [
+            {
+                "type": "text",
+                "id": "heading",
+                "default": "Heading title",
+                "label": "Title"
+            }
+           ]
+           },
+    {
+      "type": "text",
+      "name": "text",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "default": "Details about CTA",
+          "label": "Text"
+        }
+      ]
+    },
+    {
+      "type": "buttons",
+      "name": "buttons",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "button_label",
+          "default": "Button label",
+          "label": "Button text"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button link"
+        },
+        {
+          "type": "select",
+          "id": "button_style",
+          "options": [
+            {
+              "value": "button__primary",
+              "label": "Primary"
+            },
+            {
+              "value": "button__secondary",
+              "label": "Secondary"
+            },
+            {
+              "value": "button__outline",
+              "label": "Outline"
+            }
+          ],
+          "default": "button__primary",
+          "label": "Button style"
+        },
+        {
+          "type": "checkbox",
+          "id": "button_full_width",
+          "label": "Full width",
+          "default": false
+        }
+      ]
+    }
+    ],
+    "presets": [
+        {
+            "name": "Image banner",
+            "blocks": [
+                {
+                    "type": "heading"
+                }
+            ]
+        }
+    ]
+}
+{% endschema %}
