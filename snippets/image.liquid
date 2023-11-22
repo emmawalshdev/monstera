@@ -1,0 +1,49 @@
+{% comment %}
+    Renders images
+
+    Accepts:
+    - image: {Object} Image Liquid object
+    - hide_on_mobile: {Boolean} If true load invisible gif image (optional, default: false)
+    - disable_lazyload: {Boolean} Disable browser lazyloading (optional, default: false)
+    - zoom: {Boolean} Enable image zoom
+    - css_class: {String} CSS classes to add to wrapper
+		- max_width: Pixel value limiting max horizontal size of image (optional)
+
+    Usage:
+    {% render 'image', image: image %}
+{% endcomment %}
+
+{%- liquid
+	assign sizes = "100,200,400,600,800,1000,1200,1400,1600,1800,2000,2500,3000,3500,4000" | split: ','
+	if max_width == blank
+		assign max_width = sizes | last | plus: 0
+	endif
+	-%}
+	{%- capture src_set -%}
+		{%- for s in sizes -%}
+			{%- assign size = s | plus: 0 -%}
+			{%- unless size > max_width -%}
+				{%- if size < 1000 -%}
+					{{ image | image_url: width: size }} {{ size }}w,
+				{%- else -%}
+					{{ image | image_url: width: size }} {{ size }}w,
+				{%- endif -%}
+			{%- endunless -%}
+		{%- endfor -%}
+	{%- endcapture -%}
+
+	<div class="image-container {{ css_class }}"{% if zoom %} data-image-zoom style="background-image:url({{ image | image_url: width: 2000 }})"{% endif %}>
+		<picture>
+			{%- if hide_on_mobile -%}
+			<source media="(max-width: 767px)"
+					sizes="1px"
+					srcset="{{ 'blank.gif' | asset_img_url: 'small' }} 1w"/>
+			<source media="(min-width: 768px)"
+					srcset="{{ src_set }}"/>
+			{%- else -%}
+			<source type="image/webp"
+					srcset="{{ src_set }}"/>
+			{%- endif -%}
+			<img src="{{ image | image_url: width: 100 }}" width="100" height="100" alt="{{ image.alt }}"{% unless disable_lazyload %} loading="lazy"{% endunless %}/>
+		</picture>
+	</div>

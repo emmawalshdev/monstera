@@ -10,7 +10,13 @@
     {{ content_for_header }}
     <!-- Header hook for plugins -->
     {{ 'application.css' | asset_url | stylesheet_tag }}
+    <!-- CSS stylesheets -->
+    {%- liquid 
+      echo 'theme.css' | asset_url | stylesheet_tag: preload: true
+    %}
+
     {{ 'application.js' | asset_url | script_tag }}
+
     <script src="{{ 'application.js' | asset_url }} defer"></script>
     <style>
       [x-cloak] {
