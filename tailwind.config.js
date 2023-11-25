@@ -1,16 +1,15 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    './layout/*.liquid',
-    './sections/*.liquid',
-    './snippets/*.liquid',
-    './templates/customers/*.liquid',
-    './templates/*.liquid'
-  ],
+  mode: 'jit',
+  content: ['./**/*.liquid', './**/*.html', './_src/scripts/**/*.js'],
   theme: {
     extend: {
       height: {
-        '94': '22rem'
+        600: '600px',
+        650: '650px',
+        700: '700px',
+        750: '750px',
+        800: '800px'
       }
     },
   },
